@@ -5,13 +5,27 @@ jobs:
       - image: circleci/ruby:2.4.1
     steps:
       - checkout
-      - run: echo "Hello 1"
-  test:
+      - run: echo "Hello build"
+  test-a:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
       - checkout
-      - run: echo "Hello 2"
+      - run: echo "Hello test-a"
+      - run: sleep 5
+  test-b:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - checkout
+      - run: echo "Hello test-b"
+      - run: sleep 5
+  deploy:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - checkout
+      - run: echo "goodbye"
       - run: sleep 5
 
 workflows:
@@ -19,6 +33,13 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - test:
+      - test-a:
           requires:
             - build
+      - test-b:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test-a
+            - test-b
